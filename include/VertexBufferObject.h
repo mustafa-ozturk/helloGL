@@ -6,7 +6,6 @@ class VertexBufferObject
 {
 public:
     VertexBufferObject() = delete;
-    ~VertexBufferObject();
     VertexBufferObject(const float* vertices)
     {
         glGenBuffers(1, &m_VertexBufferObjectID);
