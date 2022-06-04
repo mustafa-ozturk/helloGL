@@ -2,6 +2,7 @@
 #include <GLFW/glfw3.h>
 
 #include <iostream>
+#include "VertexBufferObject.h"
 
 void processInput(GLFWwindow *window);
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
@@ -27,7 +28,6 @@ int main()
     glfwMakeContextCurrent(window);
     glfwSwapInterval(1);
 
-
     // glew initialization
     if (glewInit() != GLEW_OK)
     {
@@ -36,10 +36,19 @@ int main()
     }
     std::cout << "openGL version: " << glGetString(GL_VERSION) << std::endl;
 
-
     glViewport(0, 0, 800, 600);
     // update gl viewport when glfw window resizes
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+
+    float vertices[] = {
+            //   x           y         z
+            -0.5f, -0.5f, 0.0f, // vertex0
+            0.5f, -0.5f, 0.0f, // vertex1
+            0.0f, 0.5f, 0.0f // vertex2
+    };
+
+    VertexBufferObject VBO(vertices);
+
 
     while(!glfwWindowShouldClose(window))
     {
