@@ -7,10 +7,13 @@ class Shader
 {
 public:
     Shader() = delete;
-    Shader(const char* vertexShaderSourceCode, const char* fragmentShaderSourceCode)
+    Shader(const Shader&) = delete;
+    Shader& operator=(const Shader&) = delete;
+
+    Shader(const char* vertexShader, const char* fragmentShader)
     {
-        CreateVertexShader(vertexShaderSourceCode);
-        CreateFragmentShader(fragmentShaderSourceCode);
+        CreateVertexShader(vertexShader);
+        CreateFragmentShader(fragmentShader);
         m_ShaderProgramID = glCreateProgram();
         glAttachShader(m_ShaderProgramID, m_VertexShaderID);
         glAttachShader(m_ShaderProgramID, m_FragmentShaderID);
@@ -27,14 +30,21 @@ public:
 
         glDeleteShader(m_VertexShaderID);
         glDeleteShader(m_FragmentShaderID);
+    }
+    ~Shader()
+    {
+        glDeleteProgram(m_ShaderProgramID);
+    }
 
+    void UseShader() const
+    {
         glUseProgram(m_ShaderProgramID);
     }
 private:
-    void CreateVertexShader(const char* vertexShaderSourceCode)
+    void CreateVertexShader(const char* vertexShader)
     {
         m_VertexShaderID = glCreateShader(GL_VERTEX_SHADER);
-        glShaderSource(m_VertexShaderID, 1, &vertexShaderSourceCode, nullptr);
+        glShaderSource(m_VertexShaderID, 1, &vertexShader, nullptr);
         glCompileShader(m_VertexShaderID);
         // error checking
         int success;
@@ -46,10 +56,10 @@ private:
             std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
         }
     }
-    void CreateFragmentShader(const char* fragmentShaderSourceCode)
+    void CreateFragmentShader(const char* fragmentShader)
     {
         m_FragmentShaderID = glCreateShader(GL_FRAGMENT_SHADER);
-        glShaderSource(m_FragmentShaderID, 1, &fragmentShaderSourceCode, nullptr);
+        glShaderSource(m_FragmentShaderID, 1, &fragmentShader, nullptr);
         glCompileShader(m_FragmentShaderID);
         // error checking
         int success;
@@ -61,7 +71,7 @@ private:
             std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << std::endl;
         }
     }
-    unsigned int m_VertexShaderID;
-    unsigned int m_FragmentShaderID;
-    unsigned int m_ShaderProgramID;
+    unsigned int m_VertexShaderID = 0;
+    unsigned int m_FragmentShaderID = 0;
+    unsigned int m_ShaderProgramID = 0;
 };

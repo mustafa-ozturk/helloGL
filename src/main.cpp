@@ -4,6 +4,7 @@
 #include <iostream>
 #include "VertexBufferObject.h"
 #include "Shader.h"
+#include "VertexArrayObject.h"
 
 void processInput(GLFWwindow *window);
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
@@ -12,18 +13,18 @@ const unsigned int SCREEN_WIDTH = 800;
 const unsigned int SCREEN_HEIGHT = 600;
 const char* WINDOW_TITLE = "Hello OpenGL";
 
-const char* vertexShaderSource = "#version 330 core\n"
+const char* vertexShader = "#version 330 core\n"
                                  "layout (location = 0) in vec3 aPos;\n"
                                  "void main()\n"
                                  "{\n"
-                                 "   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
+                                 "  gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
                                  "}\0";
 
-const char* fragmentShaderSource = "#version 330 core\n"
+const char* fragmentShader = "#version 330 core\n"
                                    "out vec4 FragColor;\n"
                                    "void main()\n"
                                    "{\n"
-                                   "   FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
+                                   "    FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
                                    "}\0";
 
 int main()
@@ -51,7 +52,7 @@ int main()
     }
     std::cout << "openGL version: " << glGetString(GL_VERSION) << std::endl;
 
-    glViewport(0, 0, 800, 600);
+    glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
     // update gl viewport when glfw window resizes
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
@@ -62,9 +63,17 @@ int main()
             0.0f, 0.5f, 0.0f // vertex2
     };
 
-    VertexBufferObject VBO(vertices);
+    VertexArrayObject VAO;
+    VertexBufferObject VBO(vertices, sizeof(vertices));
 
-    Shader shader(vertexShaderSource, fragmentShaderSource);
+    // position vertex attribute pointer
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+
+    VBO.UnBind();
+    VAO.UnBind();
+
+    Shader shader(vertexShader, fragmentShader);
 
 
     while(!glfwWindowShouldClose(window))
@@ -73,6 +82,10 @@ int main()
 
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
+
+        shader.UseShader();
+        VAO.Bind();
+        glDrawArrays(GL_TRIANGLES, 0, 3);
 
         glfwSwapBuffers(window);
         glfwPollEvents();
