@@ -2,9 +2,11 @@
 #include <GLFW/glfw3.h>
 
 #include <iostream>
-#include "VertexBufferObject.h"
+
 #include "Shader.h"
 #include "VertexArrayObject.h"
+#include "VertexBufferObject.h"
+#include "ElementBufferObject.h"
 
 void processInput(GLFWwindow *window);
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
@@ -26,13 +28,6 @@ const char* fragmentShader = "#version 330 core\n"
                                    "{\n"
                                    "    FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
                                    "}\0";
-
-const char* fragmentShaderYellow = "#version 330 core\n"
-                             "out vec4 FragColor;\n"
-                             "void main()\n"
-                             "{\n"
-                             "    FragColor = vec4(1.0f, 1.0f, 0.0f, 1.0f);\n"
-                             "}\0";
 
 int main()
 {
@@ -63,23 +58,21 @@ int main()
     // update gl viewport when glfw window resizes
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
-//    float vertices[] = {
-//            //   x           y         z
-//            -0.5f, -0.5f, 0.0f, // vertex0
-//            0.5f, -0.5f, 0.0f, // vertex1
-//            0.0f, 0.5f, 0.0f // vertex2
-//    };
-
-    // triangle 1
-    // ----------------------------------------------------------------------------
-    float triangle1[] = {
-            -1.0f, -1.0f, 0.0f,
-            0.0f, -1.0f, 0.0f,
-            -0.5f, 0.0f, 0.0f,
+    float vertices[] = {
+            //   x           y         z
+            0.5f,  0.5f, 0.0f,  // top right
+            0.5f, -0.5f, 0.0f,  // bottom right
+            -0.5f, -0.5f, 0.0f,  // bottom left
+            -0.5f,  0.5f, 0.0f   // top left
+    };
+    unsigned int indices[] = {
+            0, 1, 3, // 1st triangle
+            1, 2, 3 // 2nd triangle
     };
 
     VertexArrayObject VAO;
-    VertexBufferObject VBO(triangle1, sizeof(triangle1));
+    VertexBufferObject VBO(vertices, sizeof(vertices));
+    ElementBufferObject EBO(indices, sizeof(indices));
 
     // position vertex attribute pointer
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
@@ -88,27 +81,9 @@ int main()
     VBO.UnBind();
     VAO.UnBind();
 
-    // triangle 2
-    // ----------------------------------------------------------------------------
-    float triangle2[] = {
-            1.0f, -1.0f, 0.0f,
-            0.0f, -1.0f, 0.0f,
-            0.5f, 0.0f, 0.0f,
-    };
-
-    VertexArrayObject VAO2;
-    VertexBufferObject VBO2(triangle2, sizeof(triangle2));
-
-    // position vertex attribute pointer
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0);
-
-    VBO2.UnBind();
-    VAO2.UnBind();
-
     Shader shader(vertexShader, fragmentShader);
-    Shader shader2(vertexShader, fragmentShaderYellow);
 
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     while(!glfwWindowShouldClose(window))
     {
         processInput(window);
@@ -118,11 +93,7 @@ int main()
 
         shader.UseShader();
         VAO.Bind();
-        glDrawArrays(GL_TRIANGLES, 0, 3);
-
-        shader2.UseShader();
-        VAO2.Bind();
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
         glfwSwapBuffers(window);
         glfwPollEvents();
