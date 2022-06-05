@@ -19,5 +19,5 @@ public:
         glDeleteBuffers(1, &m_ElementBufferObjectID);
     }
 private:
-    unsigned int m_ElementBufferObjectID;
+    unsigned int m_ElementBufferObjectID = 0;
 };
