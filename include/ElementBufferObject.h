@@ -5,6 +5,7 @@
 class ElementBufferObject
 {
 public:
+    ElementBufferObject() = delete;
     ElementBufferObject(const ElementBufferObject&) = delete;
     ElementBufferObject& operator=(const ElementBufferObject&) = delete;
 
