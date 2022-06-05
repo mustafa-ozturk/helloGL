@@ -27,6 +27,13 @@ const char* fragmentShader = "#version 330 core\n"
                                    "    FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
                                    "}\0";
 
+const char* fragmentShaderYellow = "#version 330 core\n"
+                             "out vec4 FragColor;\n"
+                             "void main()\n"
+                             "{\n"
+                             "    FragColor = vec4(1.0f, 1.0f, 0.0f, 1.0f);\n"
+                             "}\0";
+
 int main()
 {
     // glfw initialization and window creation
@@ -63,26 +70,16 @@ int main()
 //            0.0f, 0.5f, 0.0f // vertex2
 //    };
 
-    float vertices[] = {
+    // triangle 1
+    // ----------------------------------------------------------------------------
+    float triangle1[] = {
             -1.0f, -1.0f, 0.0f,
             0.0f, -1.0f, 0.0f,
             -0.5f, 0.0f, 0.0f,
-
-            1.0f, -1.0f, 0.0f,
-            0.0f, -1.0f, 0.0f,
-            0.5f, 0.0f, 0.0f,
-
-            -1.0f, 1.0f, 0.0f,
-            0.0f, 1.0f, 0.0f,
-            -0.5f, 0.0f, 0.0f,
-
-            1.0f, 1.0f, 0.0f,
-            0.0f, 1.0f, 0.0f,
-            0.5f, 0.0f, 0.0f
     };
 
     VertexArrayObject VAO;
-    VertexBufferObject VBO(vertices, sizeof(vertices));
+    VertexBufferObject VBO(triangle1, sizeof(triangle1));
 
     // position vertex attribute pointer
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
@@ -91,8 +88,26 @@ int main()
     VBO.UnBind();
     VAO.UnBind();
 
-    Shader shader(vertexShader, fragmentShader);
+    // triangle 2
+    // ----------------------------------------------------------------------------
+    float triangle2[] = {
+            1.0f, -1.0f, 0.0f,
+            0.0f, -1.0f, 0.0f,
+            0.5f, 0.0f, 0.0f,
+    };
 
+    VertexArrayObject VAO2;
+    VertexBufferObject VBO2(triangle2, sizeof(triangle2));
+
+    // position vertex attribute pointer
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+
+    VBO2.UnBind();
+    VAO2.UnBind();
+
+    Shader shader(vertexShader, fragmentShader);
+    Shader shader2(vertexShader, fragmentShaderYellow);
 
     while(!glfwWindowShouldClose(window))
     {
@@ -103,7 +118,11 @@ int main()
 
         shader.UseShader();
         VAO.Bind();
-        glDrawArrays(GL_TRIANGLES, 0, 12);
+        glDrawArrays(GL_TRIANGLES, 0, 3);
+
+        shader2.UseShader();
+        VAO2.Bind();
+        glDrawArrays(GL_TRIANGLES, 0, 3);
 
         glfwSwapBuffers(window);
         glfwPollEvents();
