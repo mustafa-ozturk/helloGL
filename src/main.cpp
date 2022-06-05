@@ -56,11 +56,29 @@ int main()
     // update gl viewport when glfw window resizes
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
+//    float vertices[] = {
+//            //   x           y         z
+//            -0.5f, -0.5f, 0.0f, // vertex0
+//            0.5f, -0.5f, 0.0f, // vertex1
+//            0.0f, 0.5f, 0.0f // vertex2
+//    };
+
     float vertices[] = {
-            //   x           y         z
-            -0.5f, -0.5f, 0.0f, // vertex0
-            0.5f, -0.5f, 0.0f, // vertex1
-            0.0f, 0.5f, 0.0f // vertex2
+            -1.0f, -1.0f, 0.0f,
+            0.0f, -1.0f, 0.0f,
+            -0.5f, 0.0f, 0.0f,
+
+            1.0f, -1.0f, 0.0f,
+            0.0f, -1.0f, 0.0f,
+            0.5f, 0.0f, 0.0f,
+
+            -1.0f, 1.0f, 0.0f,
+            0.0f, 1.0f, 0.0f,
+            -0.5f, 0.0f, 0.0f,
+
+            1.0f, 1.0f, 0.0f,
+            0.0f, 1.0f, 0.0f,
+            0.5f, 0.0f, 0.0f
     };
 
     VertexArrayObject VAO;
@@ -85,7 +103,7 @@ int main()
 
         shader.UseShader();
         VAO.Bind();
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        glDrawArrays(GL_TRIANGLES, 0, 12);
 
         glfwSwapBuffers(window);
         glfwPollEvents();
