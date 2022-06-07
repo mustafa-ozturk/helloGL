@@ -40,6 +40,11 @@ public:
     {
         glUseProgram(m_ShaderProgramID);
     }
+
+    unsigned int GetShaderProgram() const
+    {
+        return m_ShaderProgramID;
+    }
 private:
     void CreateVertexShader(const char* vertexShader)
     {

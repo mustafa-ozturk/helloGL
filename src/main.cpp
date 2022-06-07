@@ -2,6 +2,7 @@
 #include <GLFW/glfw3.h>
 
 #include <iostream>
+#include <cmath>
 
 #include "Shader.h"
 #include "VertexArrayObject.h"
@@ -17,19 +18,17 @@ const char* WINDOW_TITLE = "Hello OpenGL";
 
 const char* vertexShader = "#version 330 core\n"
                                  "layout (location = 0) in vec3 aPos;\n"
-                                 "out vec4 vertexColor;\n"
                                  "void main()\n"
                                  "{\n"
                                  "  gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
-                                 "  vertexColor = vec4(0.5f, 0.0f, 0.0f, 1.0f);"
                                  "}\0";
 
 const char* fragmentShader = "#version 330 core\n"
                                    "out vec4 FragColor;\n"
-                                   "in vec4 vertexColor;\n"
+                                   "uniform vec4 u_Color;\n"
                                    "void main()\n"
                                    "{\n"
-                                   "    FragColor = vertexColor;\n"
+                                   "    FragColor = u_Color;\n"
                                    "}\0";
 
 int main()
@@ -89,7 +88,8 @@ int main()
 
     Shader shader(vertexShader, fragmentShader);
 
-    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
+//    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     while(!glfwWindowShouldClose(window))
     {
         processInput(window);
@@ -98,6 +98,14 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT);
 
         shader.UseShader();
+
+        // update u_Color uniform
+        float timeValue = glfwGetTime();
+        float greenValue = sin(timeValue) / 2.0f + 0.5f;
+        int u_ColorUniformLocation = glGetUniformLocation(shader.GetShaderProgram(), "u_Color");
+        glUniform4f(u_ColorUniformLocation, 0.0f, greenValue, 0.0f, 1.0f);
+
+
         VAO.Bind();
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
