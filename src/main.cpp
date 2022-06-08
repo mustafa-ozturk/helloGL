@@ -18,17 +18,20 @@ const char* WINDOW_TITLE = "Hello OpenGL";
 
 const char* vertexShader = "#version 330 core\n"
                                  "layout (location = 0) in vec3 aPos;\n"
+                                 "layout (location = 1) in vec3 aColor;\n"
+                                 "out vec3 ourColor;\n"
                                  "void main()\n"
                                  "{\n"
                                  "  gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
+                                 "  ourColor = aColor;\n"
                                  "}\0";
 
 const char* fragmentShader = "#version 330 core\n"
                                    "out vec4 FragColor;\n"
-                                   "uniform vec4 u_Color;\n"
+                                   "in vec3 ourColor;\n"
                                    "void main()\n"
                                    "{\n"
-                                   "    FragColor = u_Color;\n"
+                                   "    FragColor = vec4(ourColor, 1.0);\n"
                                    "}\0";
 
 int main()
@@ -54,25 +57,25 @@ int main()
         std::cout << "Error!" << std::endl;
         return -1;
     }
+    std::cout << "-------------------------------------------------" << std::endl;
     std::cout << "openGL version: " << glGetString(GL_VERSION) << std::endl;
     int maxVertexAttributes;
     glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &maxVertexAttributes);
-    std:: cout << "Maximum number of vertex attributes supported: " << maxVertexAttributes << std::endl;
+    std::cout << "Maximum vertex attributes supported: " << maxVertexAttributes << std::endl;
+    std::cout << "-------------------------------------------------" << std::endl;
 
     glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
     // update gl viewport when glfw window resizes
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
     float vertices[] = {
-            //   x           y         z
-            0.5f,  0.5f, 0.0f,  // top right
-            0.5f, -0.5f, 0.0f,  // bottom right
-            -0.5f, -0.5f, 0.0f,  // bottom left
-            -0.5f,  0.5f, 0.0f   // top left
+            // positions                      // colors
+            0.5f, -0.5f, 0.0f,  1.0f, 0.0f, 0.0f,   // bottom right
+            -0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,   // bottom left
+            0.0f,  0.5f, 0.0f,  0.0f, 0.0f, 1.0f    // top
     };
     unsigned int indices[] = {
-            0, 1, 3, // 1st triangle
-            1, 2, 3 // 2nd triangle
+            0, 1, 2
     };
 
     VertexArrayObject VAO;
@@ -80,8 +83,11 @@ int main()
     ElementBufferObject EBO(indices, sizeof(indices));
 
     // position vertex attribute pointer
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
+    // color vertex attribute pointer
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3* sizeof(float)));
+    glEnableVertexAttribArray(1);
 
     VBO.UnBind();
     VAO.UnBind();
@@ -98,13 +104,6 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT);
 
         shader.UseShader();
-
-        // update u_Color uniform
-        float timeValue = glfwGetTime();
-        float greenValue = sin(timeValue) / 2.0f + 0.5f;
-        int u_ColorUniformLocation = glGetUniformLocation(shader.GetShaderProgram(), "u_Color");
-        glUniform4f(u_ColorUniformLocation, 0.0f, greenValue, 0.0f, 1.0f);
-
 
         VAO.Bind();
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
