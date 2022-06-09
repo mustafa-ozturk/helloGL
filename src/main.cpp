@@ -9,6 +9,7 @@
 #include "VertexBufferObject.h"
 #include "ElementBufferObject.h"
 
+void printGLInfo();
 void processInput(GLFWwindow *window);
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 
@@ -39,12 +40,7 @@ int main()
         std::cout << "Error!" << std::endl;
         return -1;
     }
-    std::cout << "-------------------------------------------------" << std::endl;
-    std::cout << "openGL version: " << glGetString(GL_VERSION) << std::endl;
-    int maxVertexAttributes;
-    glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &maxVertexAttributes);
-    std::cout << "Maximum vertex attributes supported: " << maxVertexAttributes << std::endl;
-    std::cout << "-------------------------------------------------" << std::endl;
+    printGLInfo();
 
     glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
     // update gl viewport when glfw window resizes
@@ -109,6 +105,16 @@ int main()
 
     glfwTerminate();
     return 0;
+}
+
+void printGLInfo()
+{
+    std::cout << "-------------------------------------------------" << std::endl;
+    std::cout << "openGL version: " << glGetString(GL_VERSION) << std::endl;
+    int maxVertexAttributes;
+    glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &maxVertexAttributes);
+    std::cout << "Maximum vertex attributes supported: " << maxVertexAttributes << std::endl;
+    std::cout << "-------------------------------------------------" << std::endl;
 }
 
 void processInput(GLFWwindow *window)
