@@ -16,24 +16,6 @@ const unsigned int SCREEN_WIDTH = 800;
 const unsigned int SCREEN_HEIGHT = 600;
 const char* WINDOW_TITLE = "Hello OpenGL";
 
-const char* vertexShader = "#version 330 core\n"
-                                 "layout (location = 0) in vec3 aPos;\n"
-                                 "layout (location = 1) in vec3 aColor;\n"
-                                 "out vec3 ourColor;\n"
-                                 "void main()\n"
-                                 "{\n"
-                                 "  gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
-                                 "  ourColor = aColor;\n"
-                                 "}\0";
-
-const char* fragmentShader = "#version 330 core\n"
-                                   "out vec4 FragColor;\n"
-                                   "in vec3 ourColor;\n"
-                                   "void main()\n"
-                                   "{\n"
-                                   "    FragColor = vec4(ourColor, 1.0);\n"
-                                   "}\0";
-
 int main()
 {
     // glfw initialization and window creation
@@ -92,8 +74,11 @@ int main()
     VBO.UnBind();
     VAO.UnBind();
 
-    Shader shader(vertexShader, fragmentShader);
+    Shader shader("res/shaders/BasicVertex.glsl", "res/shaders/BasicFragment.glsl");
 
+    // offset gets added to the x position of the triangle
+    float offset = 0.0f;
+    float increment = 0.01f;
 
 //    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     while(!glfwWindowShouldClose(window))
@@ -104,6 +89,16 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT);
 
         shader.UseShader();
+        shader.setUniformFloat("u_Offset", offset);
+
+        if (offset >= 0.5f)
+        {
+            increment = -0.01f;
+        } else if (offset <= -0.5f)
+        {
+            increment = 0.01f;
+        }
+        offset += increment;
 
         VAO.Bind();
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
