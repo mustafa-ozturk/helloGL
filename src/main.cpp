@@ -94,7 +94,8 @@ int main()
     shader.setUniformInt(texure0.GetTextureName(), texure0.GetTextureID() - 1);
     shader.setUniformInt(texture1.GetTextureName(), texture1.GetTextureID() - 1);
 
-    float mix = 0.0;
+    float mix = 0.0f;
+    float increment = 0.005f;
 
 //    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     while(!glfwWindowShouldClose(window))
@@ -111,10 +112,16 @@ int main()
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
         shader.setUniformFloat("u_mix", mix);
 
-        if (mix < 1.0)
+        if (mix >= 1.0)
         {
-            mix += 0.005;
+            increment = -0.005f;
         }
+        else if (mix <= 0.0)
+        {
+            increment = 0.005f;
+        }
+        std::cout << mix << std::endl;
+        mix += increment;
 
         glfwSwapBuffers(window);
         glfwPollEvents();
