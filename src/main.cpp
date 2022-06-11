@@ -80,10 +80,10 @@ int main()
     Shader shader("res/shaders/BasicVertex.glsl", "res/shaders/BasicFragment.glsl");
 
     // creating and binding texture
-    unsigned int textureID;
-    glGenTextures(1, &textureID);
+    unsigned int textureID0;
+    glGenTextures(1, &textureID0);
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, textureID);
+    glBindTexture(GL_TEXTURE_2D, textureID0);
 
     // set the texture wrapping parameters
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	// set texture wrapping to GL_REPEAT (default wrapping method)
@@ -95,6 +95,7 @@ int main()
 
     // loading texture file
     int width, height, colorChannels;
+    stbi_set_flip_vertically_on_load(true);
     unsigned char* TextureData = stbi_load("res/textures/container.jpg", &width, &height, &colorChannels, 0);
 
     // generating texture
@@ -110,7 +111,40 @@ int main()
 
     stbi_image_free(TextureData);
 
+    // second texture
+    // creating and binding texture
+    unsigned int textureID1;
+    glGenTextures(1, &textureID1);
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, textureID1);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	// set texture wrapping to GL_REPEAT (default wrapping method)
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    // loading texture file
+    int width1, height1, colorChannels1;
     stbi_set_flip_vertically_on_load(true);
+    unsigned char* TextureData1 = stbi_load("res/textures/awesomeface.png", &width1, &height1, &colorChannels1, 0);
+
+    // generating texture
+    if (TextureData1)
+    {
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width1, height1, 0, GL_RGBA, GL_UNSIGNED_BYTE, TextureData1);
+        glGenerateMipmap(GL_TEXTURE_2D);
+    }
+    else
+    {
+        std::cout << "Failed to load texture" << std::endl;
+    }
+
+    stbi_image_free(TextureData1);
+
+    shader.UseShader();
+
+    // setting the uniform sampler
+    shader.setUniformInt("texture0", 0);
+    shader.setUniformInt("texture1", 1);
 
 //    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     while(!glfwWindowShouldClose(window))
@@ -120,7 +154,6 @@ int main()
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        shader.UseShader();
 
         VAO.Bind();
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
