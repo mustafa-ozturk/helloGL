@@ -8,6 +8,7 @@
 #include "VertexArrayObject.h"
 #include "VertexBufferObject.h"
 #include "ElementBufferObject.h"
+#include "Texture.h"
 
 #include "stb_image/stb_image.h"
 
@@ -79,70 +80,19 @@ int main()
 
     Shader shader("res/shaders/BasicVertex.glsl", "res/shaders/BasicFragment.glsl");
 
-    // creating and binding texture
-    unsigned int textureID0;
-    glGenTextures(1, &textureID0);
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, textureID0);
+    Texture trollFace("res/textures/Trollface.png", GL_TEXTURE_2D, GL_RGBA, "texture0");
+    trollFace.Set2DTextureWrapping(GL_REPEAT, GL_REPEAT);
+    trollFace.Set2DTextureFiltering(GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR);
 
-    // set the texture wrapping parameters
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	// set texture wrapping to GL_REPEAT (default wrapping method)
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-
-    // set texture filtering parameters
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-    // loading texture file
-    int width, height, colorChannels;
-    stbi_set_flip_vertically_on_load(true);
-    unsigned char* TextureData = stbi_load("res/textures/Trollface.png", &width, &height, &colorChannels, 0);
-
-    // generating texture
-    if (TextureData)
-    {
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, TextureData);
-        glGenerateMipmap(GL_TEXTURE_2D);
-    }
-    else
-    {
-        std::cout << "Failed to load texture" << std::endl;
-    }
-
-    stbi_image_free(TextureData);
-
-    // second texture
-    // creating and binding texture
-    unsigned int textureID1;
-    glGenTextures(1, &textureID1);
-    glActiveTexture(GL_TEXTURE1);
-    glBindTexture(GL_TEXTURE_2D, textureID1);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	// set texture wrapping to GL_REPEAT (default wrapping method)
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-    int width1, height1, colorChannels1;
-    stbi_set_flip_vertically_on_load(true);
-    unsigned char* TextureData1 = stbi_load("res/textures/TrollDespair.png", &width1, &height1, &colorChannels1, 0);
-
-    if (TextureData1)
-    {
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width1, height1, 0, GL_RGB, GL_UNSIGNED_BYTE, TextureData1);
-        glGenerateMipmap(GL_TEXTURE_2D);
-    }
-    else
-    {
-        std::cout << "Failed to load texture" << std::endl;
-    }
-
-    stbi_image_free(TextureData1);
+    Texture despairFace("res/textures/TrollDespair.png", GL_TEXTURE_2D, GL_RGB, "texture1");
+    despairFace.Set2DTextureWrapping(GL_REPEAT, GL_REPEAT);
+    despairFace.Set2DTextureFiltering(GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR);
 
     shader.UseShader();
 
     // setting the uniform sampler
-    shader.setUniformInt("texture0", 0);
-    shader.setUniformInt("texture1", 1);
+    shader.setUniformInt(trollFace.GetTextureName(), trollFace.GetTextureID() - 1);
+    shader.setUniformInt(despairFace.GetTextureName(), despairFace.GetTextureID() - 1);
 
     float mix = 0.0;
 
@@ -154,6 +104,8 @@ int main()
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
+        trollFace.Bind();
+        despairFace.Bind();
 
         VAO.Bind();
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
