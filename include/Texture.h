@@ -6,15 +6,18 @@
 class Texture
 {
 public:
+    Texture() = delete;
+    Texture(const Texture&) = delete;
+    Texture& operator=(const Texture&) = delete;
+
     Texture(std::string textureFilePath, GLenum target, GLenum format, std::string name)
         : m_TextureName(name), m_TextureTarget(target)
     {
         glGenTextures(1, &m_TextureID);
         Bind();
         stbi_set_flip_vertically_on_load(true);
-        const char* c_str = textureFilePath.c_str();
         unsigned char* TextureData = stbi_load(
-                c_str,
+                textureFilePath.c_str(),
                 &m_Width,
                 &m_Height,
                 &m_ColorChannels,
@@ -22,17 +25,26 @@ public:
                 );
         if (TextureData)
         {
-            glTexImage2D(
-                    m_TextureTarget,
-                    0,
-                    GL_RGB,
-                    m_Width,
-                    m_Height,
-                    0,
-                    format,
-                    GL_UNSIGNED_BYTE,
-                    TextureData
-                    );
+            if (target == GL_TEXTURE_2D)
+            {
+                glTexImage2D(
+                        m_TextureTarget,
+                        0,
+                        GL_RGB,
+                        m_Width,
+                        m_Height,
+                        0,
+                        format,
+                        GL_UNSIGNED_BYTE,
+                        TextureData
+                );
+            }
+            else
+            {
+                // TODO: implement 3D textures
+                std::cout << "3D textures not implemented yet!" << std::endl;
+            }
+
             glGenerateMipmap(m_TextureTarget);
         }
         else
@@ -46,12 +58,12 @@ public:
         glActiveTexture(GL_TEXTURE0 + m_TextureID - 1);
         glBindTexture(m_TextureTarget, m_TextureID);
     }
-    void Set2DTextureWrapping(GLint sWrappingMode, GLint tWrappingMode)
+    void Set2DTextureWrapping(GLint sWrappingMode, GLint tWrappingMode) const
     {
         glTexParameteri(m_TextureTarget, GL_TEXTURE_WRAP_S, sWrappingMode);
         glTexParameteri(m_TextureTarget, GL_TEXTURE_WRAP_T, tWrappingMode);
     }
-    void Set2DTextureFiltering(GLint sFilteringMode, GLint tFilteringMode)
+    void Set2DTextureFiltering(GLint sFilteringMode, GLint tFilteringMode) const
     {
         glTexParameteri(m_TextureTarget, GL_TEXTURE_WRAP_S, sFilteringMode);
         glTexParameteri(m_TextureTarget, GL_TEXTURE_WRAP_T, tFilteringMode);

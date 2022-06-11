@@ -80,19 +80,19 @@ int main()
 
     Shader shader("res/shaders/BasicVertex.glsl", "res/shaders/BasicFragment.glsl");
 
-    Texture trollFace("res/textures/Trollface.png", GL_TEXTURE_2D, GL_RGBA, "texture0");
-    trollFace.Set2DTextureWrapping(GL_REPEAT, GL_REPEAT);
-    trollFace.Set2DTextureFiltering(GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR);
+    Texture texure0("res/textures/Trollface.png", GL_TEXTURE_2D, GL_RGBA, "texture0");
+    texure0.Set2DTextureWrapping(GL_REPEAT, GL_REPEAT);
+    texure0.Set2DTextureFiltering(GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR);
 
-    Texture despairFace("res/textures/TrollDespair.png", GL_TEXTURE_2D, GL_RGB, "texture1");
-    despairFace.Set2DTextureWrapping(GL_REPEAT, GL_REPEAT);
-    despairFace.Set2DTextureFiltering(GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR);
+    Texture texture1("res/textures/TrollDespair.png", GL_TEXTURE_2D, GL_RGB, "texture1");
+    texture1.Set2DTextureWrapping(GL_REPEAT, GL_REPEAT);
+    texture1.Set2DTextureFiltering(GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR);
 
     shader.UseShader();
 
     // setting the uniform sampler
-    shader.setUniformInt(trollFace.GetTextureName(), trollFace.GetTextureID() - 1);
-    shader.setUniformInt(despairFace.GetTextureName(), despairFace.GetTextureID() - 1);
+    shader.setUniformInt(texure0.GetTextureName(), texure0.GetTextureID() - 1);
+    shader.setUniformInt(texture1.GetTextureName(), texture1.GetTextureID() - 1);
 
     float mix = 0.0;
 
@@ -104,8 +104,8 @@ int main()
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        trollFace.Bind();
-        despairFace.Bind();
+        texure0.Bind();
+        texture1.Bind();
 
         VAO.Bind();
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
