@@ -96,12 +96,12 @@ int main()
     // loading texture file
     int width, height, colorChannels;
     stbi_set_flip_vertically_on_load(true);
-    unsigned char* TextureData = stbi_load("res/textures/container.jpg", &width, &height, &colorChannels, 0);
+    unsigned char* TextureData = stbi_load("res/textures/Trollface.png", &width, &height, &colorChannels, 0);
 
     // generating texture
     if (TextureData)
     {
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, TextureData);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, TextureData);
         glGenerateMipmap(GL_TEXTURE_2D);
     }
     else
@@ -122,15 +122,13 @@ int main()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-    // loading texture file
     int width1, height1, colorChannels1;
     stbi_set_flip_vertically_on_load(true);
-    unsigned char* TextureData1 = stbi_load("res/textures/awesomeface.png", &width1, &height1, &colorChannels1, 0);
+    unsigned char* TextureData1 = stbi_load("res/textures/TrollDespair.png", &width1, &height1, &colorChannels1, 0);
 
-    // generating texture
     if (TextureData1)
     {
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width1, height1, 0, GL_RGBA, GL_UNSIGNED_BYTE, TextureData1);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width1, height1, 0, GL_RGB, GL_UNSIGNED_BYTE, TextureData1);
         glGenerateMipmap(GL_TEXTURE_2D);
     }
     else
@@ -146,6 +144,8 @@ int main()
     shader.setUniformInt("texture0", 0);
     shader.setUniformInt("texture1", 1);
 
+    float mix = 0.0;
+
 //    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     while(!glfwWindowShouldClose(window))
     {
@@ -157,6 +157,12 @@ int main()
 
         VAO.Bind();
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        shader.setUniformFloat("u_mix", mix);
+
+        if (mix < 1.0)
+        {
+            mix += 0.005;
+        }
 
         glfwSwapBuffers(window);
         glfwPollEvents();
