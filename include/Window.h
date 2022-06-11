@@ -7,6 +7,10 @@
 class Window
 {
 public:
+    Window() = delete;
+    Window(const Window&) = delete;
+    Window& operator=(const Window&) = delete;
+
     Window(int screenWidth, int screenHeight, std::string title)
         : m_ScreenWidth(screenWidth), m_ScreenHeight(screenHeight), m_WindowTitle(title)
     {
