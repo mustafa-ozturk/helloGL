@@ -11,43 +11,11 @@
 #include "Texture.h"
 
 #include "stb_image/stb_image.h"
-
-void printGLInfo();
-void processInput(GLFWwindow *window);
-void framebuffer_size_callback(GLFWwindow* window, int width, int height);
-
-const unsigned int SCREEN_WIDTH = 800;
-const unsigned int SCREEN_HEIGHT = 600;
-const char* WINDOW_TITLE = "Hello OpenGL";
+#include "Window.h"
 
 int main()
 {
-    // glfw initialization and window creation
-    glfwInit();
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    GLFWwindow* window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, WINDOW_TITLE, nullptr, nullptr);
-    if (!window)
-    {
-        std::cout << "Failed to create GLFW window" << std::endl;
-        glfwTerminate();
-        return -1;
-    }
-    glfwMakeContextCurrent(window);
-    glfwSwapInterval(1);
-
-    // glew initialization
-    if (glewInit() != GLEW_OK)
-    {
-        std::cout << "Error!" << std::endl;
-        return -1;
-    }
-    printGLInfo();
-
-    glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-    // update gl viewport when glfw window resizes
-    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+    Window window(800, 600, "helloGL");
 
     float vertices[] = {
             // positions          // colors           // texture coords
@@ -98,9 +66,9 @@ int main()
     float increment = 0.005f;
 
 //    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-    while(!glfwWindowShouldClose(window))
+    while(!window.ShouldClose())
     {
-        processInput(window);
+        window.ProcessInputs();
 
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
@@ -120,36 +88,10 @@ int main()
         {
             increment = 0.005f;
         }
-        std::cout << mix << std::endl;
         mix += increment;
 
-        glfwSwapBuffers(window);
-        glfwPollEvents();
+        window.SwappBuffersAndPollEvents();
     }
 
-    glfwTerminate();
     return 0;
-}
-
-void printGLInfo()
-{
-    std::cout << "-------------------------------------------------" << std::endl;
-    std::cout << "openGL version: " << glGetString(GL_VERSION) << std::endl;
-    int maxVertexAttributes;
-    glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &maxVertexAttributes);
-    std::cout << "Maximum vertex attributes supported: " << maxVertexAttributes << std::endl;
-    std::cout << "-------------------------------------------------" << std::endl;
-}
-
-void processInput(GLFWwindow *window)
-{
-    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-    {
-        glfwSetWindowShouldClose(window, true);
-    }
-}
-
-void framebuffer_size_callback(GLFWwindow* window, int width, int height)
-{
-    glViewport(0, 0, width, height);
 }
