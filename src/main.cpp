@@ -48,9 +48,9 @@ int main()
 
     Shader shader("res/shaders/BasicVertex.glsl", "res/shaders/BasicFragment.glsl");
 
-    Texture texure0("res/textures/Trollface.png", GL_TEXTURE_2D, GL_RGBA, "texture0");
-    texure0.Set2DTextureWrapping(GL_REPEAT, GL_REPEAT);
-    texure0.Set2DTextureFiltering(GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR);
+    Texture texture0("res/textures/Trollface.png", GL_TEXTURE_2D, GL_RGBA, "texture0");
+    texture0.Set2DTextureWrapping(GL_REPEAT, GL_REPEAT);
+    texture0.Set2DTextureFiltering(GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR);
 
     Texture texture1("res/textures/TrollDespair.png", GL_TEXTURE_2D, GL_RGB, "texture1");
     texture1.Set2DTextureWrapping(GL_REPEAT, GL_REPEAT);
@@ -59,7 +59,7 @@ int main()
     shader.UseShader();
 
     // setting the uniform sampler
-    shader.setUniformInt(texure0.GetTextureName(), texure0.GetTextureID() - 1);
+    shader.setUniformInt(texture0.GetTextureName(), texture0.GetTextureID() - 1);
     shader.setUniformInt(texture1.GetTextureName(), texture1.GetTextureID() - 1);
 
     float mix = 0.0f;
@@ -73,7 +73,7 @@ int main()
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        texure0.Bind();
+        texture0.Bind();
         texture1.Bind();
 
         VAO.Bind();
