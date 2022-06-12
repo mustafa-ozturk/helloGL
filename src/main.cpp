@@ -69,12 +69,15 @@ int main()
     float mix = 0.0f;
     float increment = 0.005f;
 
-    // test glm code
-    glm::vec4 vec(1.0f, 0.0f, 0.0f, 1.0f);
+    // twice as small and rotated 90 deg
     glm::mat4 trans = glm::mat4(1.0f);
-    trans = glm::translate(trans, glm::vec3(1.0f, 1.0f, 0.0f));
-    vec = trans * vec;
-    std::cout << vec.x << vec.y << vec.z << std::endl;
+    trans = glm::rotate(trans, glm::radians(90.0f), glm::vec3(0.0, 0.0, 1.0));
+    trans = glm::scale(trans, glm::vec3(0.5, 0.5, 0.5));
+
+    // query transform location
+    unsigned int transformLoc = glGetUniformLocation(shader.GetShaderProgram(), "transform");
+    // set the transform uniform value
+    glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans));
 
 
 //    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
