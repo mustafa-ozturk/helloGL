@@ -69,16 +69,8 @@ int main()
     float mix = 0.0f;
     float increment = 0.005f;
 
-    // twice as small and rotated 90 deg
-    glm::mat4 trans = glm::mat4(1.0f);
-    trans = glm::rotate(trans, glm::radians(90.0f), glm::vec3(0.0, 0.0, 1.0));
-    trans = glm::scale(trans, glm::vec3(0.5, 0.5, 0.5));
-
     // query transform location
     unsigned int transformLoc = glGetUniformLocation(shader.GetShaderProgram(), "transform");
-    // set the transform uniform value
-    glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans));
-
 
 //    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     while(!window.ShouldClose())
@@ -94,6 +86,13 @@ int main()
         VAO.Bind();
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
         shader.setUniformFloat("u_mix", mix);
+        // twice as small and rotated 90 deg
+        glm::mat4 trans = glm::mat4(1.0f);
+        trans = glm::translate(trans, glm::vec3(0.5f, -0.5f, 0.0f));
+        trans = glm::rotate(trans, (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f));
+
+        // set the transform uniform value
+        glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans));
 
         if (mix >= 1.0)
         {
