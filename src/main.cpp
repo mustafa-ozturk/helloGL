@@ -16,26 +16,27 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <vector>
 
 int main()
 {
     Window window(800, 600, "helloGL");
 
-    float vertices[] = {
+    std::vector<float> vertices = {
             // positions          // colors           // texture coords
             0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f,   // top right
             0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f,   // bottom right
             -0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f,   // bottom left
             -0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f    // top left
     };
-    unsigned int indices[] = {
+    std::vector<unsigned int> indices = {
             0, 1, 3, // first triangle
             1, 2, 3  // second triangle
     };
 
     VertexArrayObject VAO;
-    VertexBufferObject VBO(vertices, sizeof(vertices));
-    ElementBufferObject EBO(indices, sizeof(indices));
+    VertexBufferObject VBO(vertices);
+    ElementBufferObject EBO(indices);
 
     // position attribute pointer
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
