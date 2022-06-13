@@ -22,14 +22,14 @@ int main()
 {
     Window window(800, 600, "helloGL");
 
-    std::vector<float> vertices = {
+    const std::vector<float> vertices = {
             // positions          // colors           // texture coords
             0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f,   // top right
             0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f,   // bottom right
             -0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f,   // bottom left
             -0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f    // top left
     };
-    std::vector<unsigned int> indices = {
+    const std::vector<unsigned int> indices = {
             0, 1, 3, // first triangle
             1, 2, 3  // second triangle
     };
@@ -70,7 +70,7 @@ int main()
     float mix = 0.0f;
     float increment = 0.005f;
 
-    // query transform location
+    // query transform uniform location
     unsigned int transformLoc = glGetUniformLocation(shader.GetShaderProgram(), "transform");
 
 //    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -87,7 +87,7 @@ int main()
         VAO.Bind();
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
         shader.setUniformFloat("u_mix", mix);
-        // twice as small and rotated 90 deg
+
         glm::mat4 trans = glm::mat4(1.0f);
         trans = glm::translate(trans, glm::vec3(0.5f, -0.5f, 0.0f));
         trans = glm::rotate(trans, (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f));

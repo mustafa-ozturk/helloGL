@@ -11,7 +11,7 @@ public:
     Window(const Window&) = delete;
     Window& operator=(const Window&) = delete;
 
-    Window(int screenWidth, int screenHeight, std::string title)
+    Window(const int screenWidth, const int screenHeight, const std::string& title)
         : m_ScreenWidth(screenWidth), m_ScreenHeight(screenHeight), m_WindowTitle(title)
     {
         // glfw initialization and window creation

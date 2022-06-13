@@ -10,7 +10,7 @@ public:
     Texture(const Texture&) = delete;
     Texture& operator=(const Texture&) = delete;
 
-    Texture(std::string textureFilePath, GLenum target, GLenum format, std::string name)
+    Texture(const std::string& textureFilePath, const GLenum target, const GLenum format, const std::string& name)
         : m_TextureName(name), m_TextureTarget(target)
     {
         glGenTextures(1, &m_TextureID);
