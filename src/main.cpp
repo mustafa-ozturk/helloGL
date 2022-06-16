@@ -81,19 +81,27 @@ int main()
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
+        // bind textures on corresponding texture units
         texture0.Bind();
         texture1.Bind();
 
-        VAO.Bind();
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
         shader.setUniformFloat("u_mix", mix);
 
-        glm::mat4 trans = glm::mat4(1.0f);
-        trans = glm::translate(trans, glm::vec3(0.5f, -0.5f, 0.0f));
-        trans = glm::rotate(trans, (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f));
+
+        glm::mat4 translationMatrix = glm::mat4(1.0f);
+        translationMatrix = glm::translate(translationMatrix, glm::vec3(0.5f, -0.5f, 0.0f));
+        translationMatrix = glm::rotate(translationMatrix, (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f));
 
         // set the transform uniform value
-        glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans));
+        glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(translationMatrix));
+        VAO.Bind();
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+
+        translationMatrix = glm::mat4(1.0f); // reset it to identity matrix
+        translationMatrix = glm::translate(translationMatrix, glm::vec3(-0.5f, 0.5f, 0.0f));
+        glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(translationMatrix));
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
         if (mix >= 1.0)
         {
