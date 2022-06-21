@@ -54,6 +54,7 @@ int main()
     Shader shader("res/shaders/BasicShader.glsl");
 
     Texture texture0("res/textures/Trollface.png");
+    texture0.Bind();
 
     shader.UseShader();
 
@@ -65,13 +66,10 @@ int main()
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        // bind textures on corresponding texture units
-        texture0.Bind();
-
         VAO.Bind();
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
-        window.SwappBuffersAndPollEvents();
+        window.SwapBuffersAndPollEvents();
     }
 
     return 0;

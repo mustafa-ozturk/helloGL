@@ -55,7 +55,7 @@ public:
             glfwSetWindowShouldClose(m_Window, true);
         }
     }
-    void SwappBuffersAndPollEvents()
+    void SwapBuffersAndPollEvents()
     {
         glfwSwapBuffers(m_Window);
         glfwPollEvents();
