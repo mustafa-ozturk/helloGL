@@ -51,27 +51,11 @@ int main()
     VBO.UnBind();
     VAO.UnBind();
 
-    Shader shader("res/shaders/BasicVertex.glsl", "res/shaders/BasicFragment.glsl");
+    Shader shader("res/shaders/BasicShader.glsl");
 
-    Texture texture0("res/textures/Trollface.png", GL_TEXTURE_2D, GL_RGBA, "texture0");
-    texture0.Set2DTextureWrapping(GL_REPEAT, GL_REPEAT);
-    texture0.Set2DTextureFiltering(GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR);
-
-    Texture texture1("res/textures/TrollDespair.png", GL_TEXTURE_2D, GL_RGB, "texture1");
-    texture1.Set2DTextureWrapping(GL_REPEAT, GL_REPEAT);
-    texture1.Set2DTextureFiltering(GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR);
+    Texture texture0("res/textures/Trollface.png");
 
     shader.UseShader();
-
-    // setting the uniform sampler
-    shader.setUniformInt(texture0.GetTextureName(), texture0.GetTextureID() - 1);
-    shader.setUniformInt(texture1.GetTextureName(), texture1.GetTextureID() - 1);
-
-    float mix = 0.0f;
-    float increment = 0.005f;
-
-    // query transform uniform location
-    unsigned int transformLoc = glGetUniformLocation(shader.GetShaderProgram(), "transform");
 
 //    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     while(!window.ShouldClose())
@@ -83,35 +67,9 @@ int main()
 
         // bind textures on corresponding texture units
         texture0.Bind();
-        texture1.Bind();
 
-        shader.setUniformFloat("u_mix", mix);
-
-
-        glm::mat4 translationMatrix = glm::mat4(1.0f);
-        translationMatrix = glm::translate(translationMatrix, glm::vec3(0.5f, -0.5f, 0.0f));
-        translationMatrix = glm::rotate(translationMatrix, (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f));
-
-        // set the transform uniform value
-        glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(translationMatrix));
         VAO.Bind();
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-
-
-        translationMatrix = glm::mat4(1.0f); // reset it to identity matrix
-        translationMatrix = glm::translate(translationMatrix, glm::vec3(-0.5f, 0.5f, 0.0f));
-        glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(translationMatrix));
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-
-        if (mix >= 1.0)
-        {
-            increment = -0.005f;
-        }
-        else if (mix <= 0.0)
-        {
-            increment = 0.005f;
-        }
-        mix += increment;
 
         window.SwappBuffersAndPollEvents();
     }
