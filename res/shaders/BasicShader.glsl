@@ -8,9 +8,14 @@ layout (location = 2) in vec2 aTexCoord;
 out vec3 ourColor;
 out vec2 TexCoord;
 
+uniform mat4 model;
+uniform mat4 view;
+uniform mat4 projection;
+
 void main()
 {
-    gl_Position = vec4(aPos, 1.0);
+    // read multiplication from right to left (has something to do with opengl)
+    gl_Position = projection * view * model * vec4(aPos, 1.0);
     ourColor = aColor;
     TexCoord = aTexCoord;
 }
@@ -27,6 +32,6 @@ uniform sampler2D texture0;
 
 void main()
 {
-//    FragColor = vec4(ourColor.xyz, 1.0);
+    FragColor = vec4(ourColor.xyz, 1.0);
     FragColor = texture(texture0, TexCoord);
 }

@@ -43,6 +43,8 @@ public:
         });
 
         PrintGLInfo();
+
+        glEnable(GL_DEPTH_TEST);
     }
     ~Window()
     {
