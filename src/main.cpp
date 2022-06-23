@@ -24,40 +24,40 @@ int main()
 
     const std::vector<float> vertices = {
             // back
-            0.5f,  0.5f, -0.5f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f,   // top right 0
-            0.5f, -0.5f, -0.5f,   1.0f, 0.0f, 0.0f,   1.0f, 0.0f,   // bottom right 1
-            -0.5f, -0.5f, -0.5f,   1.0f, 0.0f, 0.0f,   0.0f, 0.0f,   // bottom left 2
-            -0.5f,  0.5f, -0.5f,   1.0f, 0.0f, 0.0f,   0.0f, 1.0f,    // top left 3
+            0.5f,  0.5f, -0.5f,     1.0f, 1.0f,   // top right 0
+            0.5f, -0.5f, -0.5f,     1.0f, 0.0f,   // bottom right 1
+            -0.5f, -0.5f, -0.5f,    0.0f, 0.0f,   // bottom left 2
+            -0.5f,  0.5f, -0.5f,    0.0f, 1.0f,    // top left 3
 
             // front
-            0.5f,  0.5f, 0.5f,   0.0f, 1.0f, 0.0f,   1.0f, 1.0f,   // top right 4
-            0.5f, -0.5f, 0.5f,   0.0f, 1.0f, 0.0f,  1.0f, 0.0f,   // bottom right 5
-            -0.5f, -0.5f, 0.5f,   0.0f, 1.0f, 0.0f,   0.0f, 0.0f,   // bottom left 6
-            -0.5f,  0.5f, 0.5f,   0.0f, 1.0f, 0.0f,   0.0f, 1.0f,    // top left 7
+            0.5f,  0.5f, 0.5f,      1.0f, 1.0f,   // top right 4
+            0.5f, -0.5f, 0.5f,      1.0f, 0.0f,   // bottom right 5
+            -0.5f, -0.5f, 0.5f,     0.0f, 0.0f,   // bottom left 6
+            -0.5f,  0.5f, 0.5f,     0.0f, 1.0f,    // top left 7
 
             // right side
-            0.5f,  0.5f, 0.5f,   0.0f, 0.0f, 1.0f,   1.0f, 1.0f,   // top right front 8
-            0.5f, -0.5f, 0.5f,   0.0f, 0.0f, 1.0f,   1.0f, 0.0f,   // bottom right front 9
-            0.5f,  0.5f, -0.5f,  0.0f, 0.0f, 1.0f,   0.0f, 1.0f,   // top right back 10 (from the side: top-left)
-            0.5f, -0.5f, -0.5f,  0.0f, 0.0f, 1.0f,   0.0f, 0.0f,   // bottom right back 11 (from the side: bottom-left)
+            0.5f,  0.5f, 0.5f,      1.0f, 1.0f,   // top right front 8
+            0.5f, -0.5f, 0.5f,      1.0f, 0.0f,   // bottom right front 9
+            0.5f,  0.5f, -0.5f,     0.0f, 1.0f,   // top right back 10 (from the side: top-left)
+            0.5f, -0.5f, -0.5f,     0.0f, 0.0f,   // bottom right back 11 (from the side: bottom-left)
 
             // left side
-            -0.5f,  0.5f, 0.5f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f,    // top left front 12
-            -0.5f, -0.5f, 0.5f,   1.0f, 1.0f, 0.0f,   0.0f, 0.0f,   // bottom left front 13
-            -0.5f,  0.5f, -0.5f,   1.0f, 1.0f, 0.0f,   1.0f, 1.0f,    // top left back 14 (from the side: top-right)
-            -0.5f, -0.5f, -0.5f,   1.0f, 1.0f, 0.0f,   1.0f, 0.0f,   // bottom left back 15 (from the side: bottom-right)
+            -0.5f,  0.5f, 0.5f,     0.0f, 1.0f,    // top left front 12
+            -0.5f, -0.5f, 0.5f,     0.0f, 0.0f,   // bottom left front 13
+            -0.5f,  0.5f, -0.5f,    1.0f, 1.0f,    // top left back 14 (from the side: top-right)
+            -0.5f, -0.5f, -0.5f,    1.0f, 0.0f,   // bottom left back 15 (from the side: bottom-right)
 
             // top
-            0.5f,  0.5f, 0.5f,   1.0f, 0.5f, 0.5f,   1.0f, 0.0f,   // top right front 16 (from the top: bottom-right)
-            0.5f,  0.5f, -0.5f,   1.0f, 0.5f, 0.5f,   1.0f, 1.0f,   // top right back 17 (from the top: top-right)
-            -0.5f,  0.5f, 0.5f,   1.0f, 0.5f, 0.5f,   0.0f, 0.0f,    // top left front 18 (from the top: bottom-left)
-            -0.5f,  0.5f, -0.5f,   1.0f, 0.5f, 0.5f,   0.0f, 1.0f,    // top left back 19 (from the top: top-left)
+            0.5f,  0.5f, 0.5f,      1.0f, 0.0f,   // top right front 16 (from the top: bottom-right)
+            0.5f,  0.5f, -0.5f,     1.0f, 1.0f,   // top right back 17 (from the top: top-right)
+            -0.5f,  0.5f, 0.5f,     0.0f, 0.0f,    // top left front 18 (from the top: bottom-left)
+            -0.5f,  0.5f, -0.5f,    0.0f, 1.0f,    // top left back 19 (from the top: top-left)
 
             // bottom
-            0.5f, -0.5f, 0.5f,   0.5f, 0.5f, 1.0f,   1.0f, 0.0f,   // bottom right front 20
-            0.5f, -0.5f, -0.5f,   0.5f, 0.5f, 1.0f,   1.0f, 1.0f,   // bottom right back 21
-            -0.5f, -0.5f, 0.5f,   0.5f, 0.5f, 1.0f,   0.0f, 0.0f,   // bottom left front 22
-            -0.5f, -0.5f, -0.5f,   0.5f, 0.5f, 1.0f,   0.0f, 1.0f,   // bottom left back 23
+            0.5f, -0.5f, 0.5f,      1.0f, 0.0f,   // bottom right front 20
+            0.5f, -0.5f, -0.5f,     1.0f, 1.0f,   // bottom right back 21
+            -0.5f, -0.5f, 0.5f,     0.0f, 0.0f,   // bottom left front 22
+            -0.5f, -0.5f, -0.5f,    0.0f, 1.0f,   // bottom left back 23
     };
     const std::vector<unsigned int> indices = {
             // back
@@ -90,14 +90,11 @@ int main()
     ElementBufferObject EBO(indices);
 
     // position attribute pointer
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
-    // color attribute pointer
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
-    glEnableVertexAttribArray(1);
     // texture coords attribute pointer
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
-    glEnableVertexAttribArray(2);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+    glEnableVertexAttribArray(1);
 
     VBO.UnBind();
     VAO.UnBind();
