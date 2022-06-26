@@ -11,16 +11,23 @@
 #include "Texture.h"
 #include "Window.h"
 
-
 #include "stb_image/stb_image.h"
+#include "Camera.h"
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <vector>
 
+const unsigned int SCR_WIDTH = 800;
+const unsigned int SCR_HEIGHT = 600;
+
 int main()
 {
-    Window window(800, 600, "helloGL");
+    srand (time(NULL));
+    Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
+    Window window(SCR_WIDTH, SCR_HEIGHT, "helloGL", camera);
+    float deltaTime = 0.0f;	// time between current frame and last frame
+    float lastFrame = 0.0f;;
 
     const std::vector<float> vertices = {
             // back
@@ -106,33 +113,70 @@ int main()
 
     shader.UseShader();
 
+    std::vector<glm::vec3> cubePositions = {};
+    for (int i = 0; i < 250; i++)
+    {
+        int randomNum = rand() % 25;
+        if (i % 3 == 0)
+        {
+            cubePositions.emplace_back( 0.0f + randomNum,  2.0f, 0.0f - i - 1 - randomNum);
+            cubePositions.emplace_back( 0.0f + randomNum,  1.0f, 0.0f - i - 1 - randomNum);
+            cubePositions.emplace_back( 0.0f + randomNum,  0.0f,  0.0f - i - 1 - randomNum);
+            cubePositions.emplace_back( 0.0f + randomNum,  -1.0f, 0.0f - i - 1 - randomNum);
+
+            cubePositions.emplace_back( 3.0f + randomNum,  2.0f, 0.0f - i - 1 - randomNum);
+            cubePositions.emplace_back( 3.0f + randomNum,  1.0f, 0.0f - i - 1 - randomNum);
+            cubePositions.emplace_back( 3.0f + randomNum,  0.0f,  0.0f - i - 1 - randomNum);
+            cubePositions.emplace_back( 3.0f + randomNum,  -1.0f, 0.0f - i - 1 - randomNum);
+
+            cubePositions.emplace_back( 1.0f + randomNum,  2.0f, 0.0f - i - 1 - randomNum);
+            cubePositions.emplace_back( 2.0f + randomNum,  2.0f, 0.0f - i - 1 - randomNum);
+        }
+        else if ( i % 2 == 0)
+        {
+            cubePositions.emplace_back( 0.0f - randomNum,  2.0f, 0.0f - i - 1 + randomNum);
+            cubePositions.emplace_back( 0.0f - randomNum,  1.0f, 0.0f - i - 1 + randomNum);
+            cubePositions.emplace_back( 0.0f - randomNum,  0.0f,  0.0f - i - 1 + randomNum);
+            cubePositions.emplace_back( 0.0f - randomNum,  -1.0f, 0.0f - i - 1 + randomNum);
+
+            cubePositions.emplace_back( 3.0f - randomNum,  2.0f, 0.0f - i - 1 + randomNum);
+            cubePositions.emplace_back( 3.0f - randomNum,  1.0f, 0.0f - i - 1 + randomNum);
+            cubePositions.emplace_back( 3.0f - randomNum,  0.0f,  0.0f - i - 1 + randomNum);
+            cubePositions.emplace_back( 3.0f - randomNum,  -1.0f, 0.0f - i - 1 + randomNum);
+
+            cubePositions.emplace_back( 1.0f - randomNum,  2.0f, 0.0f - i - 1 + randomNum);
+            cubePositions.emplace_back( 2.0f - randomNum,  2.0f, 0.0f - i - 1 + randomNum);
+        }
+    }
+
 //    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     while(!window.ShouldClose())
     {
-        window.ProcessInputs();
+        float currentFrame = glfwGetTime();
+        deltaTime = currentFrame - lastFrame;
+        lastFrame = currentFrame;
+        window.ProcessInputs(deltaTime);
 
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         VAO.Bind();
 
-        glm::mat4 model = glm::mat4(1.0f);
-        // model = glm::rotate(model, glm::radians(-55.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-        model = glm::rotate(model, (float)glfwGetTime() * glm::radians(50.0f), glm::vec3(0.5f, 1.0f, 0.0f));
-
-        // A bit farther away from us.
-        glm::mat4 view = glm::mat4(1.0f);
-        view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.5f));
-
-        // perspective with 45 fov
         glm::mat4 projection;
-        projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
-
-        shader.SetUniformMat4f("model", model);
-        shader.SetUniformMat4f("view", view);
+        projection = glm::perspective(glm::radians(camera.GetZoom()), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 1000.0f);
         shader.SetUniformMat4f("projection", projection);
 
-        glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
+        glm::mat4 view = glm::mat4(1.0f);
+        view = camera.GetViewMatrix();
+        shader.SetUniformMat4f("view", view);
+
+        for (int i = 0; i < cubePositions.size(); i++)
+        {
+            glm::mat4 model = glm::mat4(1.0f);
+            model = glm::translate(model, cubePositions[i]);
+            shader.SetUniformMat4f("model", model);
+            glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
+        }
 
 
         window.SwapBuffersAndPollEvents();
