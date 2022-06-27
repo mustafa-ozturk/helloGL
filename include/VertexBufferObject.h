@@ -11,7 +11,7 @@ public:
     VertexBufferObject(const VertexBufferObject&) = delete;
     VertexBufferObject& operator=(const VertexBufferObject&) = delete;
 
-    VertexBufferObject(std::vector<float>& vertices)
+    VertexBufferObject(const std::vector<float>& vertices)
     {
         glGenBuffers(1, &m_VertexBufferObjectID);
         glBindBuffer(GL_ARRAY_BUFFER, m_VertexBufferObjectID);

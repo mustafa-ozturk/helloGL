@@ -10,12 +10,11 @@ public:
     Texture(const Texture&) = delete;
     Texture& operator=(const Texture&) = delete;
 
-    Texture(std::string textureFilePath, GLenum target, GLenum format, std::string name)
-        : m_TextureName(name), m_TextureTarget(target)
+    Texture(const std::string& textureFilePath)
     {
-        glGenTextures(1, &m_TextureID);
-        Bind();
         stbi_set_flip_vertically_on_load(true);
+
+        // rgba == desired channels 4
         unsigned char* TextureData = stbi_load(
                 textureFilePath.c_str(),
                 &m_Width,
@@ -23,64 +22,49 @@ public:
                 &m_ColorChannels,
                 0
                 );
-        if (TextureData)
-        {
-            if (target == GL_TEXTURE_2D)
-            {
-                glTexImage2D(
-                        m_TextureTarget,
-                        0,
-                        GL_RGB,
-                        m_Width,
-                        m_Height,
-                        0,
-                        format,
-                        GL_UNSIGNED_BYTE,
-                        TextureData
-                );
-            }
-            else
-            {
-                // TODO: implement 3D textures
-                std::cout << "3D textures not implemented yet!" << std::endl;
-            }
 
-            glGenerateMipmap(m_TextureTarget);
-        }
-        else
-        {
-            std::cout << "Failed to load texture: " << m_TextureID << std::endl;
-        }
+        glGenTextures(1, &m_TextureID);
+        glBindTexture(GL_TEXTURE_2D, m_TextureID);
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); // minification filter ( how it will be resampled down )
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR); // magnification filter ( how it will be scaled up )
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE); // horizontal wrap (dont extend the area )
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE); // vertical wrap (dont extend the area )
+
+        // GL_RGBA8 (8 bits per channel)
+        glTexImage2D(
+                GL_TEXTURE_2D,
+                0,
+                GL_RGB8,
+                m_Width,
+                m_Height,
+                0,
+                GL_RGBA,
+                GL_UNSIGNED_BYTE,
+                TextureData
+        );
+        glGenerateMipmap(GL_TEXTURE_2D);
+        glBindTexture(GL_TEXTURE_2D, 0);
+
         stbi_image_free(TextureData);
     }
-    void Bind()
+    ~Texture()
     {
-        glActiveTexture(GL_TEXTURE0 + m_TextureID - 1);
-        glBindTexture(m_TextureTarget, m_TextureID);
+        glDeleteTextures(1, &m_TextureID);
     }
-    void Set2DTextureWrapping(GLint sWrappingMode, GLint tWrappingMode) const
+
+    void Bind(unsigned int slot = 0)
     {
-        glTexParameteri(m_TextureTarget, GL_TEXTURE_WRAP_S, sWrappingMode);
-        glTexParameteri(m_TextureTarget, GL_TEXTURE_WRAP_T, tWrappingMode);
+        glActiveTexture(GL_TEXTURE0 + slot);
+        glBindTexture(GL_TEXTURE_2D, m_TextureID);
     }
-    void Set2DTextureFiltering(GLint sFilteringMode, GLint tFilteringMode) const
+    void UnBind() const
     {
-        glTexParameteri(m_TextureTarget, GL_TEXTURE_WRAP_S, sFilteringMode);
-        glTexParameteri(m_TextureTarget, GL_TEXTURE_WRAP_T, tFilteringMode);
-    }
-    std::string GetTextureName() const
-    {
-        return m_TextureName;
-    }
-    unsigned int GetTextureID() const
-    {
-        return m_TextureID;
+        glBindTexture(GL_TEXTURE_2D, 0);
     }
 private:
     unsigned int m_TextureID = 0;
     int m_Width = 0;
     int m_Height = 0;
     int m_ColorChannels = 0;
-    std::string m_TextureName;
-    GLenum m_TextureTarget;
 };

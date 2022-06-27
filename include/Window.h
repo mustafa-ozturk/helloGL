@@ -3,6 +3,7 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
+#include "Camera.h"
 
 class Window
 {
@@ -11,8 +12,9 @@ public:
     Window(const Window&) = delete;
     Window& operator=(const Window&) = delete;
 
-    Window(int screenWidth, int screenHeight, std::string title)
-        : m_ScreenWidth(screenWidth), m_ScreenHeight(screenHeight), m_WindowTitle(title)
+    Window(const int screenWidth, const int screenHeight, const std::string& title, Camera& camera)
+        : m_ScreenWidth(screenWidth), m_ScreenHeight(screenHeight), m_WindowTitle(title),
+          m_LastX(screenWidth / 2.0f), m_LastY(screenHeight / 2.0f), m_Camera(camera)
     {
         // glfw initialization and window creation
         glfwInit();
@@ -27,7 +29,9 @@ public:
             glfwTerminate();
         }
         glfwMakeContextCurrent(m_Window);
+        glfwSetWindowUserPointer(m_Window, static_cast<void*>(this));
         glfwSwapInterval(1);
+        glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
         // glew initialization
         if (glewInit() != GLEW_OK)
@@ -42,20 +46,66 @@ public:
             glViewport(0, 0, width, height);
         });
 
+        glfwSetCursorPosCallback(m_Window, [](GLFWwindow* window, double xposIn, double yposIn){
+            auto self = static_cast<Window*>(glfwGetWindowUserPointer(window));
+
+            float xpos = static_cast<float>(xposIn);
+            float ypos = static_cast<float>(yposIn);
+
+            if (self->m_FirstMouse)
+            {
+                self->m_LastX = xpos;
+                self->m_LastY = ypos;
+                self->m_FirstMouse = false;
+            }
+
+            float xoffset = xpos - self->m_LastX;
+            float yoffset = self->m_LastY - ypos; // reversed since y-coordinates go from bottom to top
+
+            self->m_LastX = xpos;
+            self->m_LastY = ypos;
+
+            self->m_Camera.ProcessMouseMovement(xoffset, yoffset);
+        });
+
+        glfwSetScrollCallback(m_Window, [](GLFWwindow* window, double xoffset, double yoffset){
+            auto self = static_cast<Window*>(glfwGetWindowUserPointer(window));
+            self->m_Camera.ProcessMouseScroll(static_cast<float>(yoffset));
+        });
+
         PrintGLInfo();
+
+        glEnable(GL_DEPTH_TEST);
     }
     ~Window()
     {
+        glfwSetWindowUserPointer(m_Window, nullptr);
         glfwTerminate();
     }
-    void ProcessInputs()
+    void ProcessInputs(float deltaTime)
     {
         if (glfwGetKey(m_Window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         {
             glfwSetWindowShouldClose(m_Window, true);
         }
+        if (glfwGetKey(m_Window, GLFW_KEY_W) == GLFW_PRESS)
+        {
+            m_Camera.ProcessKeyboard(m_Camera.FORWARD, deltaTime);
+        }
+        if (glfwGetKey(m_Window, GLFW_KEY_S) == GLFW_PRESS)
+        {
+            m_Camera.ProcessKeyboard(m_Camera.BACKWARD, deltaTime);
+        }
+        if (glfwGetKey(m_Window, GLFW_KEY_A) == GLFW_PRESS)
+        {
+            m_Camera.ProcessKeyboard(m_Camera.LEFT, deltaTime);
+        }
+        if (glfwGetKey(m_Window, GLFW_KEY_D) == GLFW_PRESS)
+        {
+            m_Camera.ProcessKeyboard(m_Camera.RIGHT, deltaTime);
+        }
     }
-    void SwappBuffersAndPollEvents()
+    void SwapBuffersAndPollEvents()
     {
         glfwSwapBuffers(m_Window);
         glfwPollEvents();
@@ -64,11 +114,19 @@ public:
     {
         return glfwWindowShouldClose(m_Window);
     }
+    GLFWwindow* GetWindow() const
+    {
+        return m_Window;
+    }
 private:
     int m_ScreenWidth = 0;
     int m_ScreenHeight = 0;
     std::string m_WindowTitle;
     GLFWwindow* m_Window;
+    bool m_FirstMouse = true;
+    float m_LastX = 0;
+    float m_LastY = 0;
+    Camera& m_Camera;
 
     void PrintGLInfo()
     {

@@ -9,7 +9,7 @@ public:
     ElementBufferObject(const ElementBufferObject&) = delete;
     ElementBufferObject& operator=(const ElementBufferObject&) = delete;
 
-    ElementBufferObject(std::vector<unsigned int>& indices)
+    ElementBufferObject(const std::vector<unsigned int>& indices)
     {
         glGenBuffers(1, &m_ElementBufferObjectID);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ElementBufferObjectID);
